@@ -1,5 +1,7 @@
 package com.rgv.catalojogo.platform.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rgv.catalojogo.game.entity.Game;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -19,5 +21,6 @@ public class Platform {
     private String name;
 
     @ManyToMany(mappedBy = "platforms", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Game> games;
 }

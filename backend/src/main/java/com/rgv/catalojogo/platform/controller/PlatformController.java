@@ -16,8 +16,6 @@ import java.util.List;
 public class PlatformController {
     private final PlatformService platformService; // Torne o campo final
 
-    // Remova o construtor manual se estiver usando @RequiredArgsConstructor
-    // O Lombok cuidará disso para você.
 
     @GetMapping()
     public ResponseEntity<List<Platform>> findAll(){

@@ -1,5 +1,7 @@
 package com.rgv.catalojogo.game.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rgv.catalojogo.platform.entity.Platform;
 import jakarta.persistence.*;
 import lombok.Data;
