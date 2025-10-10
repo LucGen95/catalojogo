@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-db:5432/minhadb
+    username: meuuser
+    password: minhasenha
+  data:
+    mongodb:
+      uri: mongodb://meuuser:minhasenha@mongo-db:27017/minhadb?authSource=admin
