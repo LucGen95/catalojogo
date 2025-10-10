@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/LucGen95/catalojogo.git'
-            }
-        }
+//         stage('Checkout') {
+//             steps {
+//                 git branch: 'main', url: 'https://github.com/LucGen95/catalojogo.git'
+//             }
+//         }
 
         stage('Build Backend') {
             steps {
