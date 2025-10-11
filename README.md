@@ -12,13 +12,18 @@ O projeto está sendo desenvolvido com **Spring Boot**, com foco em praticar os 
 # Informações para DEV
 
 Com o Docker Desktop aberto, execute o seguinte comando no terminal na raiz do projeto:
+
 docker-compose up --build
+
 docker-compose up -d (após fazer o build)
 
+
 Para parar o docker:
+
 docker-compose down -v
 
 Para verificar os logs de cada container:
+
 docker logs {Container}
 
 # Figma do Projeto 
