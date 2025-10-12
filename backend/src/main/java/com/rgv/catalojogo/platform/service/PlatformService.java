@@ -14,7 +14,7 @@ import java.util.List;
 public class PlatformService {
     private final PlatformRepository platformRepository;
 
-    @Autowired // Opcional, mas boa prática para clareza
+    @Autowired
     public PlatformService(PlatformRepository platformRepository) {
         this.platformRepository = platformRepository;
     }

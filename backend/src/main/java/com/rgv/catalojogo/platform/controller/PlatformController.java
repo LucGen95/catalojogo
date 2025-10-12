@@ -2,7 +2,7 @@ package com.rgv.catalojogo.platform.controller;
 
 import com.rgv.catalojogo.platform.entity.Platform;
 import com.rgv.catalojogo.platform.service.PlatformService;
-import lombok.RequiredArgsConstructor; // Use apenas este
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/catalojogos/v1/platform")
-@RequiredArgsConstructor // Isso irá gerar o construtor com o campo final 'platformService'
+@RequiredArgsConstructor
 public class PlatformController {
-    private final PlatformService platformService; // Torne o campo final
+    private final PlatformService platformService;
 
 
     @GetMapping()
