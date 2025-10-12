@@ -3,10 +3,12 @@ package com.rgv.catalojogo.game.controller;
 
 import com.rgv.catalojogo.game.entity.Game;
 import com.rgv.catalojogo.game.projection.GamePlatformProjection;
+import com.rgv.catalojogo.game.repository.GameRepository;
 import com.rgv.catalojogo.game.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +20,7 @@ import java.util.List;
 public class GameController {
 
     private final GameService gameService;
+    private final GameRepository gameRepository;
 
     @GetMapping
     public ResponseEntity<List<Game>> findAll(){
@@ -29,5 +32,11 @@ public class GameController {
     public ResponseEntity<List<GamePlatformProjection>> findAllGamePlatforms(){
         List<GamePlatformProjection> gamesPlatforms = gameService.findAllGamePlatform();
         return ResponseEntity.ok(gamesPlatforms);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Game> findGameById(@PathVariable Long id){
+        Game game = gameService.findGameById(id);
+        return ResponseEntity.ok(game);
     }
 }

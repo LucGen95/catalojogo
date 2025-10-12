@@ -13,4 +13,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     @Query(value = "select g.title, p.name from game g join game_platform gp on g.id = gp.game_id join platform p on p.id = gp.platform_id ", nativeQuery = true)
     List<GamePlatformProjection> findAllGamePlatform();
+
+    Game findGameById(Long id);
 }

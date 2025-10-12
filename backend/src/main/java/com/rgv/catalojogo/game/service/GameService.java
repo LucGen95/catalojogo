@@ -25,4 +25,8 @@ public class GameService {
     public List<GamePlatformProjection> findAllGamePlatform(){
         return gameRepository.findAllGamePlatform();
     }
+
+    public Game findGameById(Long id) {
+        return gameRepository.findById(id).get();
+    }
 }
