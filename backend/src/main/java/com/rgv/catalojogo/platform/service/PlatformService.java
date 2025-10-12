@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public class PlatformService {
-    PlatformRepository platformRepository;
+    private final PlatformRepository platformRepository;
 
     @Autowired // Opcional, mas boa prática para clareza
     public PlatformService(PlatformRepository platformRepository) {
