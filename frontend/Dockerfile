@@ -1,12 +1,14 @@
 # ============================
 # Etapa 1: Build do Angular
 # ============================
-FROM node:22-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm cache clean --force \
+ && rm -rf node_modules package-lock.json \
+ && npm install --legacy-peer-deps
 
 COPY . .
 RUN npm run build --prod
