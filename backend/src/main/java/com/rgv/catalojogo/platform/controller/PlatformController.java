@@ -4,9 +4,7 @@ import com.rgv.catalojogo.platform.entity.Platform;
 import com.rgv.catalojogo.platform.service.PlatformService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +19,11 @@ public class PlatformController {
     public ResponseEntity<List<Platform>> findAll(){
         List<Platform> platforms = platformService.findAll();
         return ResponseEntity.ok(platforms);
+    }
+
+    @PostMapping("cadastro")
+    public ResponseEntity<Platform> savePlatform(@RequestBody Platform platform){
+        Platform platform3 = platformService.savePlatform(platform);
+        return ResponseEntity.ok(platform3);
     }
 }

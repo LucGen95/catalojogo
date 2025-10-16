@@ -22,4 +22,8 @@ public class PlatformService {
     public List<Platform> findAll(){
         return platformRepository.findAll();
     }
+
+    public Platform savePlatform (Platform platform){
+        return platformRepository.save(platform);
+    }
 }
