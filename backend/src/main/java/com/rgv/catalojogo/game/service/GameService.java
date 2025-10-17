@@ -1,22 +1,23 @@
 package com.rgv.catalojogo.game.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.rgv.catalojogo.game.entity.Game;
 import com.rgv.catalojogo.game.projection.GamePlatformProjection;
 import com.rgv.catalojogo.game.repository.GameRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.rgv.catalojogo.platform.entity.Platform;
+import com.rgv.catalojogo.platform.repository.PlatformRepository;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class GameService {
 
     private final GameRepository gameRepository;
-
-    @Autowired
-    public GameService(GameRepository gameRepository) {
-        this.gameRepository = gameRepository;
-    }
+    private final PlatformRepository platformRepository;
 
     public List<Game> findAll(){
         return gameRepository.findAll();
@@ -28,5 +29,18 @@ public class GameService {
 
     public Game findGameById(Long id) {
         return gameRepository.findById(id).get();
+    }
+    
+    public Game saveGame(Game game) {
+        if (game.getPlatforms() != null && !game.getPlatforms().isEmpty()) {
+            List<Platform> platforms = game.getPlatforms().stream()
+                    .map(p -> platformRepository.findById(p.getId())
+                            .orElseThrow(() -> new RuntimeException("Platform not found: " + p.getId())))
+                    .toList();
+
+            game.setPlatforms(platforms);
+        }
+
+        return gameRepository.save(game);
     }
 }

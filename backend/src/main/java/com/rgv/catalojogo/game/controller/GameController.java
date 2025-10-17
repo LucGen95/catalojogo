@@ -1,18 +1,21 @@
 package com.rgv.catalojogo.game.controller;
 
 
-import com.rgv.catalojogo.game.entity.Game;
-import com.rgv.catalojogo.game.projection.GamePlatformProjection;
-import com.rgv.catalojogo.game.repository.GameRepository;
-import com.rgv.catalojogo.game.service.GameService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.rgv.catalojogo.game.entity.Game;
+import com.rgv.catalojogo.game.projection.GamePlatformProjection;
+import com.rgv.catalojogo.game.service.GameService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +23,6 @@ import java.util.List;
 public class GameController {
 
     private final GameService gameService;
-    private final GameRepository gameRepository;
 
     @GetMapping
     public ResponseEntity<List<Game>> findAll(){
@@ -38,5 +40,11 @@ public class GameController {
     public ResponseEntity<Game> findGameById(@PathVariable Long id){
         Game game = gameService.findGameById(id);
         return ResponseEntity.ok(game);
+    }
+    
+    @PostMapping
+    public ResponseEntity<Game> createGame(@RequestBody Game game) {
+        Game saved = gameService.saveGame(game);
+        return ResponseEntity.ok(saved);
     }
 }

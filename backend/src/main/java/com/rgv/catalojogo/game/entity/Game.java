@@ -23,11 +23,6 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Game implements Serializable {
 
-    public Game(String title, String platformName){
-        this.title = title;
-        this.platformName = platformName;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
