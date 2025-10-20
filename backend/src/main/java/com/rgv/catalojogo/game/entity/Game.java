@@ -49,13 +49,12 @@ public class Game implements Serializable {
     @Transient
     private String platformName;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     @JoinTable(
             name = "game_platform",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "platform_id")
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private List<Platform> platforms;
 }

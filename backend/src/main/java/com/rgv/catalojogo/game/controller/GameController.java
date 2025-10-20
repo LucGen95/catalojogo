@@ -3,6 +3,7 @@ package com.rgv.catalojogo.game.controller;
 
 import java.util.List;
 
+import com.rgv.catalojogo.game.dto.CreateGameDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,7 @@ public class GameController {
     }
     
     @PostMapping
-    public ResponseEntity<Game> createGame(@RequestBody Game game) {
+    public ResponseEntity<Game> createGame(@RequestBody CreateGameDTO game) {
         Game saved = gameService.saveGame(game);
         return ResponseEntity.ok(saved);
     }

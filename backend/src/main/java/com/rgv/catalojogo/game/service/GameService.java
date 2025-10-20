@@ -2,6 +2,9 @@ package com.rgv.catalojogo.game.service;
 
 import java.util.List;
 
+import com.rgv.catalojogo.game.dto.CreateGameDTO;
+import com.rgv.catalojogo.game.mapper.GameMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.rgv.catalojogo.game.entity.Game;
@@ -18,6 +21,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final PlatformRepository platformRepository;
+    private final GameMapper gameMapper;
 
     public List<Game> findAll(){
         return gameRepository.findAll();
@@ -30,17 +34,12 @@ public class GameService {
     public Game findGameById(Long id) {
         return gameRepository.findById(id).get();
     }
-    
-    public Game saveGame(Game game) {
-        if (game.getPlatforms() != null && !game.getPlatforms().isEmpty()) {
-            List<Platform> platforms = game.getPlatforms().stream()
-                    .map(p -> platformRepository.findById(p.getId())
-                            .orElseThrow(() -> new RuntimeException("Platform not found: " + p.getId())))
-                    .toList();
 
-            game.setPlatforms(platforms);
-        }
+    @Transactional
+    public Game saveGame(CreateGameDTO dto) {
+        Game game = gameMapper.toEntity(dto);
+        Game saved = gameRepository.save(game);
 
-        return gameRepository.save(game);
+        return saved;
     }
 }
