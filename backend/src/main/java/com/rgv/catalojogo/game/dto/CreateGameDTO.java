@@ -11,8 +11,8 @@ public class CreateGameDTO {
     private String title;
     private String description;
     private LocalDate releaseDate;
-    private String developer;
-    private String publisher;
+    private Long developerId;
+    private Long publisherId;
     private String cover_url;
     private List<PlatformIdDto> platforms;
 
@@ -27,8 +27,8 @@ public class CreateGameDTO {
         dto.setTitle(game.getTitle());
         dto.setDescription(game.getDescription());
         dto.setReleaseDate(game.getReleaseDate());
-        dto.setDeveloper(game.getDeveloper());
-        dto.setPublisher(game.getPublisher());
+        dto.setDeveloperId(game.getDeveloper() != null ? game.getDeveloper().getId() : null);
+        dto.setPublisherId(game.getPublisher() != null ? game.getPublisher().getId() : null);
         dto.setCover_url(game.getCover_url());
 
         if (game.getPlatforms() != null && !game.getPlatforms().isEmpty()) {

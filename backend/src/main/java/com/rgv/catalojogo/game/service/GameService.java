@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import com.rgv.catalojogo.game.entity.Game;
 import com.rgv.catalojogo.game.projection.GamePlatformProjection;
 import com.rgv.catalojogo.game.repository.GameRepository;
-import com.rgv.catalojogo.platform.entity.Platform;
-import com.rgv.catalojogo.platform.repository.PlatformRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final PlatformRepository platformRepository;
     private final GameMapper gameMapper;
 
     public List<Game> findAll(){

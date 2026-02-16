@@ -1,13 +1,10 @@
 package com.rgv.catalojogo.game.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.rgv.catalojogo.company.entity.Company;
 import com.rgv.catalojogo.platform.entity.Platform;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.action.internal.OrphanRemovalAction;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -37,11 +34,13 @@ public class Game implements Serializable {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    @Column(length = 100)
-    private String developer;
+    @ManyToOne
+    @JoinColumn(name = "developer_id")
+    private Company developer;
 
-    @Column(length = 100)
-    private String publisher;
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private Company publisher;
 
     @Column(length = 255 )
     private String cover_url;
