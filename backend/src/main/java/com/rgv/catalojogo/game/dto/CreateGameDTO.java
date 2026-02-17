@@ -1,6 +1,9 @@
 package com.rgv.catalojogo.game.dto;
 
 import com.rgv.catalojogo.game.entity.Game;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
@@ -8,16 +11,19 @@ import java.util.stream.Collectors;
 
 @Data
 public class CreateGameDTO {
+    @NotBlank(message = "title is required")
     private String title;
     private String description;
     private LocalDate releaseDate;
     private Long developerId;
     private Long publisherId;
     private String cover_url;
+    @Valid
     private List<PlatformIdDto> platforms;
 
     @Data
     public static class PlatformIdDto {
+        @NotNull(message = "platform id is required")
         private Long id;
     }
 

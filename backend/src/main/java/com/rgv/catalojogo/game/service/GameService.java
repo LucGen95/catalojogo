@@ -2,6 +2,8 @@ package com.rgv.catalojogo.game.service;
 
 import java.util.List;
 
+import com.rgv.catalojogo.common.exception.BadRequestException;
+import com.rgv.catalojogo.common.exception.ResourceNotFoundException;
 import com.rgv.catalojogo.game.dto.CreateGameDTO;
 import com.rgv.catalojogo.game.mapper.GameMapper;
 import jakarta.transaction.Transactional;
@@ -29,7 +31,11 @@ public class GameService {
     }
 
     public Game findGameById(Long id) {
-        return gameRepository.findById(id).get();
+        if (id == null || id <= 0) {
+            throw new BadRequestException("id must be greater than zero");
+        }
+        return gameRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found: " + id));
     }
 
     @Transactional
