@@ -3,6 +3,8 @@ package com.rgv.catalojogo.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +38,22 @@ public class GlobalExceptionHandler {
                 ? "Invalid request body"
                 : ex.getMessage();
         return buildResponse(HttpStatus.BAD_REQUEST, message, request.getRequest().getRequestURI(), null);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnauthorized(
+            BadCredentialsException ex,
+            ServletWebRequest request
+    ) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid login credentials", request.getRequest().getRequestURI(), null);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleForbidden(
+            AccessDeniedException ex,
+            ServletWebRequest request
+    ) {
+        return buildResponse(HttpStatus.FORBIDDEN, "Access denied", request.getRequest().getRequestURI(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
