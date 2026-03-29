@@ -45,4 +45,17 @@ public class GameService {
 
         return saved;
     }
+
+    @Transactional
+    public Game updateGame(Long id, CreateGameDTO dto) {
+        Game game = findGameById(id);
+        gameMapper.updateEntity(game, dto);
+        return gameRepository.save(game);
+    }
+
+    @Transactional
+    public void deleteGame(Long id) {
+        Game game = findGameById(id);
+        gameRepository.delete(game);
+    }
 }

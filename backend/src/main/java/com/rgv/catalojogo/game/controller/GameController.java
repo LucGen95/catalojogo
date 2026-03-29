@@ -1,14 +1,15 @@
 package com.rgv.catalojogo.game.controller;
 
-
 import java.util.List;
 
 import com.rgv.catalojogo.game.dto.CreateGameDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,10 +44,22 @@ public class GameController {
         Game game = gameService.findGameById(id);
         return ResponseEntity.ok(game);
     }
-    
+
     @PostMapping
     public ResponseEntity<Game> createGame(@Valid @RequestBody CreateGameDTO game) {
         Game saved = gameService.saveGame(game);
         return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Game> updateGame(@PathVariable Long id, @Valid @RequestBody CreateGameDTO game) {
+        Game updated = gameService.updateGame(id, game);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
+        gameService.deleteGame(id);
+        return ResponseEntity.noContent().build();
     }
 }

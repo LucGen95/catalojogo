@@ -6,6 +6,7 @@ import com.rgv.catalojogo.auth.dto.RegisterRequest;
 import com.rgv.catalojogo.common.exception.BadRequestException;
 import com.rgv.catalojogo.security.JwtService;
 import com.rgv.catalojogo.user.entity.User;
+import com.rgv.catalojogo.user.entity.UserRole;
 import com.rgv.catalojogo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +39,7 @@ public class AuthService {
         user.setUsername(username);
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setRole(resolveRoleForNewUser());
 
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser);
@@ -63,7 +65,15 @@ public class AuthService {
                 "Bearer",
                 user.getId(),
                 user.getUsername(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole().name()
         );
+    }
+
+    private UserRole resolveRoleForNewUser() {
+        if (!userRepository.existsByRole(UserRole.ADMIN)) {
+            return UserRole.ADMIN;
+        }
+        return UserRole.USER;
     }
 }

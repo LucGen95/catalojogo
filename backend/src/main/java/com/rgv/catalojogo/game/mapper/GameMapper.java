@@ -26,7 +26,11 @@ public class GameMapper {
 
     public Game toEntity(CreateGameDTO dto) {
         Game game = new Game();
+        updateEntity(game, dto);
+        return game;
+    }
 
+    public void updateEntity(Game game, CreateGameDTO dto) {
         game.setTitle(dto.getTitle());
         game.setDescription(dto.getDescription());
         game.setReleaseDate(dto.getReleaseDate());
@@ -38,6 +42,8 @@ public class GameMapper {
             Company developer = companyRepository.findById(dto.getDeveloperId())
                     .orElseThrow(() -> new ResourceNotFoundException("Developer not found: " + dto.getDeveloperId()));
             game.setDeveloper(developer);
+        } else {
+            game.setDeveloper(null);
         }
 
         if (dto.getPublisherId() != null) {
@@ -47,6 +53,8 @@ public class GameMapper {
             Company publisher = companyRepository.findById(dto.getPublisherId())
                     .orElseThrow(() -> new ResourceNotFoundException("Publisher not found: " + dto.getPublisherId()));
             game.setPublisher(publisher);
+        } else {
+            game.setPublisher(null);
         }
 
         game.setCover_url(dto.getCover_url());
@@ -65,9 +73,10 @@ public class GameMapper {
                             .orElseThrow(() -> new ResourceNotFoundException("Platform not found: " + p.getId())))
                     .collect(Collectors.toList());
             game.setPlatforms(platforms);
+            return;
         }
 
-        return game;
+        game.setPlatforms(List.of());
     }
 
     public CreateGameDTO toDTO(Game game) {

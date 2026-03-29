@@ -27,6 +27,7 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("uid", user.getId());
         claims.put("email", user.getEmail());
+        claims.put("role", user.getRole().name());
 
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtExpirationMs);
