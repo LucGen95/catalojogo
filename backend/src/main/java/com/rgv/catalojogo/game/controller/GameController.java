@@ -4,6 +4,10 @@ import java.util.List;
 
 import com.rgv.catalojogo.game.dto.CreateGameDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rgv.catalojogo.game.entity.Game;
@@ -37,6 +42,15 @@ public class GameController {
     public ResponseEntity<List<GamePlatformProjection>> findAllGamePlatforms(){
         List<GamePlatformProjection> gamesPlatforms = gameService.findAllGamePlatform();
         return ResponseEntity.ok(gamesPlatforms);
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<Page<Game>> searchCatalog(
+            @RequestParam(name = "q", required = false) String query,
+            @PageableDefault(size = 9, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Game> games = gameService.searchCatalog(query, pageable);
+        return ResponseEntity.ok(games);
     }
 
     @GetMapping("/{id}")

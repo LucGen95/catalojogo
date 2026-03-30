@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { getGames } from './api';
+import { getGamesCatalog } from './api';
 import type { Game } from './types';
 
 type Palette = {
@@ -9,12 +9,12 @@ type Palette = {
 };
 
 const palettes: Palette[] = [
-  { from: '#0c1638', to: '#224d98' },
-  { from: '#112b18', to: '#2f7a47' },
-  { from: '#34140f', to: '#b05a1f' },
-  { from: '#2d1248', to: '#764ba2' },
-  { from: '#1d2431', to: '#62748d' },
-  { from: '#09384f', to: '#0d7a84' },
+  { from: '#1a0a3a', to: '#3a1a6a' },
+  { from: '#0a1a0a', to: '#1a3a1a' },
+  { from: '#2a0a0a', to: '#5a1a0a' },
+  { from: '#0a1a2a', to: '#17405f' },
+  { from: '#1a0a2a', to: '#523d79' },
+  { from: '#2a1a0a', to: '#6b4f20' },
 ];
 
 function hashCode(value: string): number {
@@ -36,14 +36,10 @@ function getTimestamp(value?: string): number {
 }
 
 function formatDate(value?: string): string {
-  if (!value) return 'Data nao informada';
+  if (!value) return '-';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(date);
+  return new Intl.DateTimeFormat('pt-BR').format(date);
 }
 
 function formatYear(value?: string): string {
@@ -54,7 +50,7 @@ function formatYear(value?: string): string {
 }
 
 function truncateText(value?: string, maxLength = 110): string {
-  if (!value) return 'Descubra mais detalhes desse jogo quando a ficha completa estiver disponivel.';
+  if (!value) return 'Sem descricao cadastrada ainda.';
   if (value.length <= maxLength) return value;
   return `${value.slice(0, maxLength).trimEnd()}...`;
 }
@@ -73,7 +69,7 @@ function getStudios(games: Game[]): string[] {
 function getCoverStyle(game: Game): CSSProperties {
   const palette = getPalette(`${game.id}-${game.title}`);
   const backgroundImage = game.cover_url
-    ? `linear-gradient(180deg, rgba(9, 14, 27, 0.08), rgba(9, 14, 27, 0.82)), url("${game.cover_url}")`
+    ? `linear-gradient(180deg, rgba(8, 10, 20, 0.12), rgba(8, 10, 20, 0.45)), url("${game.cover_url}")`
     : `linear-gradient(160deg, ${palette.from}, ${palette.to})`;
 
   return {
@@ -89,22 +85,20 @@ function compareByReleaseDateDesc(left: Game, right: Game): number {
 
 function LogoMark() {
   return (
-    <svg className="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
       <path fill="#FFDF00" d="M50 10 L90 50 L50 90 L10 50 Z" />
       <circle fill="#002776" cx="50" cy="50" r="28" />
-      <g fill="white" opacity="0.92">
-        <circle cx="50" cy="45" r="2" />
-        <circle cx="55" cy="50" r="1.5" />
-        <circle cx="45" cy="50" r="1.5" />
-        <circle cx="50" cy="55" r="1.5" />
-      </g>
+      <circle cx="50" cy="44" r="2.2" fill="white" />
+      <circle cx="56" cy="51" r="1.7" fill="white" />
+      <circle cx="44" cy="51" r="1.7" fill="white" />
+      <circle cx="50" cy="57" r="1.7" fill="white" />
     </svg>
   );
 }
 
 function BrandLogo() {
   return (
-    <div className="brand-lockup" aria-label="Catalojogo">
+    <div className="logo" aria-label="Catalojogo">
       <span>CATAL</span>
       <LogoMark />
       <span>JOGO</span>
@@ -114,35 +108,38 @@ function BrandLogo() {
 
 function SectionHeader({
   title,
-  caption,
+  linkLabel,
 }: {
   title: string;
-  caption?: string;
+  linkLabel?: string;
 }) {
   return (
-    <div className="section-head">
-      <div>
-        <p className="section-kicker">Catalogo aberto</p>
-        <h2>{title}</h2>
-      </div>
-      {caption ? <p className="section-caption">{caption}</p> : null}
+    <div className="sec-hd">
+      <span className="sec-title">{title}</span>
+      {linkLabel ? (
+        <a href="#catalogo" className="sec-link">
+          {linkLabel}
+        </a>
+      ) : null}
     </div>
   );
 }
 
 function FeaturedCard({ game }: { game: Game }) {
   return (
-    <article className="featured-card">
-      <div className="featured-cover" style={getCoverStyle(game)}>
-        <span className="featured-chip">{game.developer?.name || game.publisher?.name || 'Jogo brasileiro'}</span>
+    <article className="card-lg">
+      <div className="cover-lg" style={getCoverStyle(game)}>
+        <span className="g-tag">{game.developer?.name || game.publisher?.name || 'Catalogo brasileiro'}</span>
       </div>
-      <div className="featured-body">
-        <div className="featured-meta">
-          <span>{game.developer?.name || game.publisher?.name || 'Estudio em destaque'}</span>
-          <span>{formatYear(game.releaseDate)}</span>
+      <div className="card-body">
+        <p className="card-title">{game.title}</p>
+        <p className="card-meta">
+          {game.developer?.name || game.publisher?.name || 'Estudio brasileiro'} · {formatYear(game.releaseDate)}
+        </p>
+        <div className="card-rating">
+          <span className="rnum">Lancamento:</span>
+          <span>{formatDate(game.releaseDate)}</span>
         </div>
-        <h3>{game.title}</h3>
-        <p>{truncateText(game.description, 118)}</p>
       </div>
     </article>
   );
@@ -150,63 +147,66 @@ function FeaturedCard({ game }: { game: Game }) {
 
 function CompactCard({ game }: { game: Game }) {
   return (
-    <article className="compact-card">
-      <div className="compact-cover" style={getCoverStyle(game)} />
-      <div className="compact-body">
-        <h3>{game.title}</h3>
-        <p>{game.developer?.name || game.publisher?.name || 'Catalogo brasileiro'}</p>
-      </div>
-    </article>
-  );
-}
-
-function CatalogCard({ game }: { game: Game }) {
-  return (
-    <article className="catalog-card">
-      <div className="catalog-cover" style={getCoverStyle(game)}>
-        <span className="catalog-badge">#{game.id}</span>
-      </div>
-      <div className="catalog-body">
-        <div className="catalog-title-row">
-          <h3>{game.title}</h3>
-          <span>{formatYear(game.releaseDate)}</span>
-        </div>
-        <p className="catalog-description">{truncateText(game.description, 132)}</p>
-        <dl>
-          <div>
-            <dt>Lancamento</dt>
-            <dd>{formatDate(game.releaseDate)}</dd>
-          </div>
-          <div>
-            <dt>Estudio</dt>
-            <dd>{game.developer?.name || '-'}</dd>
-          </div>
-          <div>
-            <dt>Publisher</dt>
-            <dd>{game.publisher?.name || '-'}</dd>
-          </div>
-        </dl>
+    <article className="card-sm">
+      <div className="cover-sm" style={getCoverStyle(game)} />
+      <div className="card-body-sm">
+        <p className="card-title-sm">{game.title}</p>
+        <p className="rating-sm">{game.developer?.name || game.publisher?.name || formatYear(game.releaseDate)}</p>
       </div>
     </article>
   );
 }
 
 export default function App() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [featuredGames, setFeaturedGames] = useState<Game[]>([]);
+  const [recentGames, setRecentGames] = useState<Game[]>([]);
+  const [latestGames, setLatestGames] = useState<Game[]>([]);
+  const [totalGames, setTotalGames] = useState(0);
+  const [loadingSections, setLoadingSections] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadGames() {
+    async function loadTotalGames() {
       try {
-        setLoading(true);
-        const data = await getGames();
+        const page = await getGamesCatalog({ size: 1, sort: 'id,desc' });
+
         if (!cancelled) {
-          const sortedGames = [...data].sort(compareByReleaseDateDesc);
-          setGames(sortedGames);
+          setTotalGames(page.totalElements);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Erro inesperado');
+        }
+      }
+    }
+
+    loadTotalGames();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSections() {
+      try {
+        setLoadingSections(true);
+        const queryValue = deferredQuery.trim() || undefined;
+        const [featuredPage, recentPage, latestPage] = await Promise.all([
+          getGamesCatalog({ q: queryValue, size: 3, sort: 'releaseDate,desc' }),
+          getGamesCatalog({ q: queryValue, size: 6, sort: 'releaseDate,desc' }),
+          getGamesCatalog({ q: queryValue, size: 6, sort: 'id,desc' }),
+        ]);
+
+        if (!cancelled) {
+          setFeaturedGames(featuredPage.content);
+          setRecentGames(recentPage.content);
+          setLatestGames(latestPage.content);
           setError(null);
         }
       } catch (err) {
@@ -215,227 +215,157 @@ export default function App() {
         }
       } finally {
         if (!cancelled) {
-          setLoading(false);
+          setLoadingSections(false);
         }
       }
     }
 
-    loadGames();
+    loadSections();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [deferredQuery]);
 
-  const filteredGames = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (!term) return games;
-
-    return games.filter((game) => {
-      const title = game.title?.toLowerCase() ?? '';
-      const developer = game.developer?.name?.toLowerCase() ?? '';
-      const publisher = game.publisher?.name?.toLowerCase() ?? '';
-      const description = game.description?.toLowerCase() ?? '';
-
-      return (
-        title.includes(term) ||
-        developer.includes(term) ||
-        publisher.includes(term) ||
-        description.includes(term)
-      );
+  const homeGames = useMemo(() => {
+    const uniqueGames = new Map<number, Game>();
+    [...featuredGames, ...recentGames, ...latestGames].forEach((game) => {
+      uniqueGames.set(game.id, game);
     });
-  }, [games, query]);
+    return Array.from(uniqueGames.values());
+  }, [featuredGames, recentGames, latestGames]);
 
-  const featuredGames = useMemo(() => filteredGames.slice(0, 3), [filteredGames]);
-  const recentGames = useMemo(() => filteredGames.slice(0, 6), [filteredGames]);
-  const visibleGames = useMemo(() => filteredGames.slice(0, 12), [filteredGames]);
-  const studios = useMemo(() => getStudios(games).slice(0, 12), [games]);
-  const studioCount = studios.length;
+  const studios = useMemo(() => getStudios(homeGames).slice(0, 12), [homeGames]);
+  const hasInitialContent = featuredGames.length > 0 || recentGames.length > 0 || latestGames.length > 0;
+  const isInitialLoading = !hasInitialContent && loadingSections;
+  const latestTitle = deferredQuery.trim() ? 'Resultados mais recentes' : 'Ultimos jogos adicionados';
 
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <a href="/" className="brand-anchor" aria-label="Pagina inicial do Catalojogo">
+      <nav className="nav">
+        <a href="/" className="logo-link" aria-label="Pagina inicial do Catalojogo">
           <BrandLogo />
         </a>
 
-        <nav className="topbar-tabs" aria-label="Navegacao principal">
-          <a className="topbar-tab topbar-tab-active" href="/">
+        <div className="nav-tabs">
+          <a href="/" className="nav-tab active">
             Jogos
           </a>
-          <span className="topbar-tab topbar-tab-disabled" title="Disponivel quando o login entrar no ar">
+          <span className="nav-tab disabled" title="Faca login para acessar">
             Minha lista
           </span>
-        </nav>
+        </div>
 
-        <div className="topbar-search">
+        <div className="nav-search">
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Buscar jogos, estudios ou publishers"
+            placeholder="Buscar jogos..."
             aria-label="Buscar jogos"
           />
         </div>
 
-        <div className="topbar-actions">
-          <button type="button" className="btn btn-ghost" title="Login em breve">
+        <div className="spacer" />
+
+        <div className="nav-actions">
+          <button className="btn-ghost-dark" type="button" title="Login em breve">
             Entrar
           </button>
-          <button type="button" className="btn btn-primary" title="Cadastro em breve">
+          <button className="btn-primary" type="button" title="Cadastro em breve">
             Cadastrar
           </button>
         </div>
+      </nav>
+
+      <header className="hero">
+        <h1>O catalogo dos jogos brasileiros</h1>
+        <p>Descubra, explore e acompanhe jogos feitos no Brasil sem precisar fazer login primeiro.</p>
+        <form className="hero-search" onSubmit={(event) => event.preventDefault()}>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Ex: Dandara, Toren, Horizon Chase..."
+            aria-label="Buscar jogo na home"
+          />
+          <button type="submit">Buscar jogo</button>
+        </form>
+        <p className="hero-count">
+          <strong>{totalGames.toLocaleString('pt-BR')} jogos</strong> no catalogo
+        </p>
       </header>
 
-      <main>
-        <section className="hero">
-          <div className="hero-copy">
-            <p className="hero-eyebrow">Catalogo brasileiro de games</p>
-            <h1>Descubra jogos feitos no Brasil sem precisar fazer login primeiro.</h1>
-            <p className="hero-text">
-              O Catalojogo funciona como um catalogo vivo: voce explora, busca e conhece os titulos livremente.
-              Conta so entra quando quiser avaliar, comentar ou montar sua propria lista.
-            </p>
+      {isInitialLoading ? <p className="state">Carregando jogos...</p> : null}
+      {error ? <p className="state error">{error}</p> : null}
 
-            <form className="hero-search" onSubmit={(event) => event.preventDefault()}>
-              <input
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Ex: Dandara, Toren, Horizon Chase..."
-                aria-label="Buscar jogo na home"
-              />
-              <button type="submit" className="btn btn-search">
-                Buscar jogo
+      {!loadingSections && !error && latestGames.length === 0 ? (
+        <section className="section">
+          <SectionHeader title="Nenhum jogo encontrado" />
+          <p className="section-copy">Tente outro termo ou limpe a busca para voltar ao catalogo completo.</p>
+          <button className="btn-primary" type="button" onClick={() => setQuery('')}>
+            Limpar busca
+          </button>
+        </section>
+      ) : null}
+
+      {featuredGames.length > 0 ? (
+        <section className="section">
+          <SectionHeader title="Destaques" linkLabel="Ver todos →" />
+          <div className="feat-grid">
+            {featuredGames.map((game) => (
+              <FeaturedCard key={game.id} game={game} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {recentGames.length > 0 ? (
+        <section className="section">
+          <SectionHeader title="Lancamentos recentes" linkLabel="Ver mais →" />
+          <div className="sm-grid">
+            {recentGames.map((game) => (
+              <CompactCard key={game.id} game={game} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="section" id="catalogo">
+        <SectionHeader title={latestTitle} linkLabel="Ver todos →" />
+        {loadingSections ? <p className="section-copy">Atualizando resultados...</p> : null}
+        {!loadingSections && latestGames.length > 0 ? (
+          <div className="sm-grid">
+            {latestGames.map((game) => (
+              <CompactCard key={game.id} game={game} />
+            ))}
+          </div>
+        ) : null}
+      </section>
+
+      {studios.length > 0 ? (
+        <section className="section">
+          <SectionHeader title="Estudios e publishers" />
+          <div className="genre-row">
+            {studios.map((studio) => (
+              <button key={studio} className="chip" type="button" onClick={() => setQuery(studio)}>
+                {studio}
               </button>
-            </form>
-
-            <div className="hero-metrics" aria-label="Metricas do catalogo">
-              <div>
-                <strong>{games.length.toLocaleString('pt-BR')}</strong>
-                <span>jogos no catalogo</span>
-              </div>
-              <div>
-                <strong>{studioCount.toLocaleString('pt-BR')}</strong>
-                <span>estudios mapeados</span>
-              </div>
-              <div>
-                <strong>{filteredGames.length.toLocaleString('pt-BR')}</strong>
-                <span>resultado(s) visivel(is)</span>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <aside className="hero-aside">
-            <div className="hero-panel hero-panel-brand">
-              <BrandLogo />
-              <p>
-                Inspiracao de catalogo social, mas com home util desde o primeiro acesso e foco em jogos brasileiros.
-              </p>
+          <div className="nudge">
+            <span>Quer dar notas e criar sua lista? Vai dar para fazer isso quando o login entrar no ar.</span>
+            <div className="nudge-btns">
+              <button className="btn-ghost" type="button">
+                Entrar
+              </button>
+              <button className="btn-primary" type="button">
+                Cadastrar
+              </button>
             </div>
-            <div className="hero-panel-grid">
-              <div className="hero-panel">
-                <span className="hero-panel-kicker">Navegue livremente</span>
-                <p>Busca, vitrine e exploracao abertas para todo mundo.</p>
-              </div>
-              <div className="hero-panel">
-                <span className="hero-panel-kicker">Conta para interagir</span>
-                <p>Login fica reservado para nota, comentario e lista pessoal.</p>
-              </div>
-            </div>
-          </aside>
+          </div>
         </section>
-
-        {loading ? <p className="state-card">Carregando jogos do catalogo...</p> : null}
-        {error ? <p className="state-card state-card-error">{error}</p> : null}
-
-        {!loading && !error && filteredGames.length === 0 ? (
-          <section className="empty-state">
-            <SectionHeader
-              title="Nenhum jogo encontrado"
-              caption="Tente outro termo de busca ou limpe o filtro para ver o catalogo completo."
-            />
-            <button type="button" className="btn btn-primary" onClick={() => setQuery('')}>
-              Limpar busca
-            </button>
-          </section>
-        ) : null}
-
-        {!loading && !error && filteredGames.length > 0 ? (
-          <>
-            <section className="content-section">
-              <SectionHeader
-                title="Destaques da home"
-                caption="Uma selecao imediata para entrar no clima do catalogo sem depender de login."
-              />
-              <div className="featured-grid">
-                {featuredGames.map((game) => (
-                  <FeaturedCard key={game.id} game={game} />
-                ))}
-              </div>
-            </section>
-
-            <section className="content-section">
-              <SectionHeader
-                title="Mais recentes no radar"
-                caption="Titulos ordenados pelos lancamentos mais novos que ja estao no catalogo agora."
-              />
-              <div className="compact-grid">
-                {recentGames.map((game) => (
-                  <CompactCard key={game.id} game={game} />
-                ))}
-              </div>
-            </section>
-
-            <section className="content-section">
-              <SectionHeader
-                title="Estudios e publishers presentes"
-                caption="Uma camada de exploracao rapida para o visitante entender quem faz esse mercado girar."
-              />
-              <div className="chip-row">
-                {studios.map((studio) => (
-                  <button key={studio} type="button" className="chip" onClick={() => setQuery(studio)}>
-                    {studio}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="content-section">
-              <SectionHeader
-                title="Explore o catalogo"
-                caption={`Mostrando ${visibleGames.length} de ${filteredGames.length} jogo(s) encontrados.`}
-              />
-              <div className="catalog-grid">
-                {visibleGames.map((game) => (
-                  <CatalogCard key={game.id} game={game} />
-                ))}
-              </div>
-            </section>
-
-            <section className="content-section content-section-callout">
-              <div className="callout-card">
-                <div>
-                  <p className="section-kicker">Conta quando fizer sentido</p>
-                  <h2>Use o site normalmente sem barreira de login.</h2>
-                  <p>
-                    Quando a autenticacao do front entrar, o login vai servir para dar nota, comentar e montar a
-                    propria lista. A descoberta continua aberta para qualquer pessoa.
-                  </p>
-                </div>
-                <div className="callout-actions">
-                  <button type="button" className="btn btn-ghost">
-                    Entrar
-                  </button>
-                  <button type="button" className="btn btn-primary">
-                    Criar conta
-                  </button>
-                </div>
-              </div>
-            </section>
-          </>
-        ) : null}
-      </main>
+      ) : null}
     </div>
   );
 }
